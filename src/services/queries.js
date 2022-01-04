@@ -1,32 +1,50 @@
 import { checkError, client } from './client.js';
 export async function getMovies() {
-  // return the list of all movies
+  let movies = await client.from('movies').select('id');
+  return checkError(movies);
 }
 
 export async function getMoviesWithDirector() {
-  // return the list of all the movies with their director
+  let movies = await client.from('movies').select(`*, directors (name)`);
+  return checkError(movies);
 }
 
 export async function getDirectorNames() {
-  // return the list of the director's names
+  let response = await client.from('directors').select('name');
+  return checkError(response);
 }
 
 export async function getMovieById(id) {
-  // return the movie with the given id
+  let response = await client.from('movies').select('*').match({ id }).single();
+  return checkError(response);
 }
 
 export async function getMovieByTitle(title) {
-  // return the movie with the given title
+  let response = await client.from('movies').select('*').match({ title }).single();
+  return checkError(response);
 }
 
 export async function getOldestMovie() {
-  // return the oldest movie (assume the database is not sorted)
+  let response = await client
+    .from('movies')
+    .select('*')
+    .order('year', { ascending: true })
+    .limit(1)
+    .single();
+  return checkError(response);
 }
 
 export async function getMoviesAfter(year) {
-  // return movies made after the year passed in
+  let response = await client.from('movies').select('*').gt('year', year);
+  return checkError(response);
 }
 
 export async function getHighestGrossingMovie() {
-  // return movie with the highest box office total
+  let resp = await client
+    .from('movies')
+    .select('*')
+    .order('box_office', { ascending: false })
+    .limit(1)
+    .single();
+  return checkError(resp);
 }
